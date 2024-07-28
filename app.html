@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Predictor</title>
+    <script>
+        async function fetchPrediction(ticker, features) {
+            const response = await fetch('https://<your-app-name>.azurewebsites.net/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ticker, features })
+            });
+            const data = await response.json();
+            return data.prediction;
+        }
+
+        async function updatePlot(ticker) {
+            const response = await fetch(`https://<your-app-name>.azurewebsites.net/plot/${ticker}`);
+            const plotHtml = await response.text();
+            document.getElementById('plot-container').innerHTML = plotHtml;
+        }
+
+        document.getElementById('refresh-button').addEventListener('click', async () => {
+            const ticker = 'AAPL'; // Replace with dynamic ticker
+            const features = [/* your feature data */];
+            const prediction = await fetchPrediction(ticker, features);
+            // Optionally update the graph with prediction data here
+            await updatePlot(ticker);
+        });
+    </script>
+</head>
+<body>
+    <h1>Stock Predictor</h1>
+    <button id="refresh-button">Refresh Graph</button>
+    <div id="plot-container">
+        <!-- Plot will be loaded here -->
+    </div>
+</body>
+</html>
+
